@@ -16,22 +16,7 @@ import {
 } from '@dnd-kit/sortable';
 import { useJsonStore } from '../../store/jsonStore';
 import { TreeNode } from './TreeNode';
-import type { JsonNode } from '../../types/json';
 import { findNodeById, findParentNode } from '../../utils/jsonParser';
-
-function getAllNodeIds(nodes: JsonNode[]): string[] {
-  const ids: string[] = [];
-  const collect = (nodeList: JsonNode[]) => {
-    for (const node of nodeList) {
-      ids.push(node.id);
-      if (node.children) {
-        collect(node.children);
-      }
-    }
-  };
-  collect(nodes);
-  return ids;
-}
 
 export function TreeEditor() {
   const { nodes, moveNode, searchTerm, updateNode } = useJsonStore();
@@ -97,7 +82,6 @@ export function TreeEditor() {
     setWasExpanded(false);
   };
 
-  const allIds = getAllNodeIds(nodes);
   const activeNode = activeId ? findNodeById(nodes, activeId) : null;
   const rootNode = nodes[0];
   // 获取子节点的 ID 列表（用于拖拽排序）
