@@ -1,0 +1,148 @@
+{
+  "users": [
+    {"id": 1, "name": "Alice", "email": "alice@example.com", "age": 25, "active": true},
+    {"id": 2, "name": "Bob", "email": "bob@example.com", "age": 30, "active": false},
+    {"id": 3, "name": "Charlie", "email": "charlie@example.com", "age": 35, "active": true},
+    {"id": 4, "name": "David", "email": "david@example.com", "age": 28, "active": true},
+    {"id": 5, "name": "Eve", "email": "eve@example.com", "age": 22, "active": false},
+    {"id": 6, "name": "Frank", "email": "frank@example.com", "age": 40, "active": true},
+    {"id": 7, "name": "Grace", "email": "grace@example.com", "age": 33, "active": true},
+    {"id": 8, "name": "Henry", "email": "henry@example.com", "age": 29, "active": false},
+    {"id": 9, "name": "Ivy", "email": "ivy@example.com", "age": 26, "active": true},
+    {"id": 10, "name": "Jack", "email": "jack@example.com", "age": 31, "active": true}
+  ],
+  "products": [
+    {"sku": "P001", "name": "Laptop", "price": 999.99, "stock": 50, "category": "Electronics"},
+    {"sku": "P002", "name": "Mouse", "price": 29.99, "stock": 200, "category": "Electronics"},
+    {"sku": "P003", "name": "Keyboard", "price": 79.99, "stock": 150, "category": "Electronics"},
+    {"sku": "P004", "name": "Monitor", "price": 299.99, "stock": 75, "category": "Electronics"},
+    {"sku": "P005", "name": "Headphones", "price": 149.99, "stock": 100, "category": "Electronics"},
+    {"sku": "P006", "name": "Desk", "price": 199.99, "stock": 30, "category": "Furniture"},
+    {"sku": "P007", "name": "Chair", "price": 249.99, "stock": 45, "category": "Furniture"},
+    {"sku": "P008", "name": "Lamp", "price": 49.99, "stock": 80, "category": "Furniture"},
+    {"sku": "P009", "name": "Notebook", "price": 9.99, "stock": 500, "category": "Stationery"},
+    {"sku": "P010", "name": "Pen Set", "price": 14.99, "stock": 300, "category": "Stationery"}
+  ],
+  "orders": [
+    {"orderId": "ORD-001", "userId": 1, "items": [{"sku": "P001", "qty": 1}, {"sku": "P002", "qty": 2}], "total": 1059.97, "status": "shipped"},
+    {"orderId": "ORD-002", "userId": 2, "items": [{"sku": "P003", "qty": 1}], "total": 79.99, "status": "pending"},
+    {"orderId": "ORD-003", "userId": 3, "items": [{"sku": "P004", "qty": 2}, {"sku": "P005", "qty": 1}], "total": 749.97, "status": "delivered"},
+    {"orderId": "ORD-004", "userId": 1, "items": [{"sku": "P006", "qty": 1}, {"sku": "P007", "qty": 1}], "total": 449.98, "status": "shipped"},
+    {"orderId": "ORD-005", "userId": 4, "items": [{"sku": "P008", "qty": 3}], "total": 149.97, "status": "pending"},
+    {"orderId": "ORD-006", "userId": 5, "items": [{"sku": "P009", "qty": 10}, {"sku": "P010", "qty": 5}], "total": 174.85, "status": "delivered"},
+    {"orderId": "ORD-007", "userId": 6, "items": [{"sku": "P001", "qty": 1}], "total": 999.99, "status": "shipped"},
+    {"orderId": "ORD-008", "userId": 7, "items": [{"sku": "P002", "qty": 5}, {"sku": "P003", "qty": 2}], "total": 309.93, "status": "pending"},
+    {"orderId": "ORD-009", "userId": 8, "items": [{"sku": "P004", "qty": 1}, {"sku": "P008", "qty": 2}], "total": 399.97, "status": "delivered"},
+    {"orderId": "ORD-010", "userId": 9, "items": [{"sku": "P005", "qty": 2}], "total": 299.98, "status": "shipped"}
+  ],
+  "inventory": {
+    "warehouse_a": {
+      "location": "New York",
+      "capacity": 10000,
+      "items": [
+        {"sku": "P001", "quantity": 20, "shelf": "A1"},
+        {"sku": "P002", "quantity": 100, "shelf": "A2"},
+        {"sku": "P003", "quantity": 75, "shelf": "A3"},
+        {"sku": "P004", "quantity": 40, "shelf": "B1"},
+        {"sku": "P005", "quantity": 50, "shelf": "B2"}
+      ]
+    },
+    "warehouse_b": {
+      "location": "Los Angeles",
+      "capacity": 8000,
+      "items": [
+        {"sku": "P001", "quantity": 30, "shelf": "C1"},
+        {"sku": "P006", "quantity": 30, "shelf": "C2"},
+        {"sku": "P007", "quantity": 45, "shelf": "C3"},
+        {"sku": "P008", "quantity": 80, "shelf": "D1"},
+        {"sku": "P009", "quantity": 250, "shelf": "D2"},
+        {"sku": "P010", "quantity": 150, "shelf": "D3"}
+      ]
+    }
+  },
+  "analytics": {
+    "daily_stats": [
+      {"date": "2024-01-01", "visitors": 1250, "orders": 45, "revenue": 12500.50},
+      {"date": "2024-01-02", "visitors": 1180, "orders": 38, "revenue": 9800.25},
+      {"date": "2024-01-03", "visitors": 1420, "orders": 52, "revenue": 15200.75},
+      {"date": "2024-01-04", "visitors": 1350, "orders": 48, "revenue": 13100.00},
+      {"date": "2024-01-05", "visitors": 1500, "orders": 60, "revenue": 18500.50},
+      {"date": "2024-01-06", "visitors": 1680, "orders": 72, "revenue": 22000.25},
+      {"date": "2024-01-07", "visitors": 1720, "orders": 78, "revenue": 24500.00},
+      {"date": "2024-01-08", "visitors": 1100, "orders": 35, "revenue": 8500.75},
+      {"date": "2024-01-09", "visitors": 1280, "orders": 42, "revenue": 11200.50},
+      {"date": "2024-01-10", "visitors": 1390, "orders": 50, "revenue": 14800.25}
+    ],
+    "top_products": [
+      {"sku": "P001", "sales": 150, "revenue": 149998.50},
+      {"sku": "P004", "sales": 120, "revenue": 35998.80},
+      {"sku": "P005", "sales": 100, "revenue": 14999.00},
+      {"sku": "P007", "sales": 85, "revenue": 21249.15},
+      {"sku": "P003", "sales": 75, "revenue": 5999.25}
+    ],
+    "customer_segments": [
+      {"segment": "Premium", "count": 250, "avg_order": 450.00, "retention": 0.85},
+      {"segment": "Regular", "count": 1200, "avg_order": 150.00, "retention": 0.65},
+      {"segment": "New", "count": 800, "avg_order": 80.00, "retention": 0.40},
+      {"segment": "Inactive", "count": 500, "avg_order": 0, "retention": 0.10}
+    ]
+  },
+  "settings": {
+    "general": {
+      "siteName": "MyStore",
+      "currency": "USD",
+      "timezone": "America/New_York",
+      "language": "en",
+      "maintenance": false
+    },
+    "shipping": {
+      "methods": [
+        {"id": "standard", "name": "Standard Shipping", "price": 5.99, "days": "5-7"},
+        {"id": "express", "name": "Express Shipping", "price": 12.99, "days": "2-3"},
+        {"id": "overnight", "name": "Overnight Shipping", "price": 24.99, "days": "1"}
+      ],
+      "freeThreshold": 50.00,
+      "restrictions": ["Alaska", "Hawaii", "Puerto Rico"]
+    },
+    "payment": {
+      "methods": ["credit_card", "paypal", "apple_pay", "google_pay"],
+      "currencies": ["USD", "EUR", "GBP", "CAD"],
+      "taxRate": 0.08
+    },
+    "notifications": {
+      "email": {"enabled": true, "templates": ["welcome", "order_confirm", "shipping", "review"]},
+      "sms": {"enabled": false, "templates": ["order_confirm", "shipping"]},
+      "push": {"enabled": true, "templates": ["promotion", "restock"]}
+    }
+  },
+  "logs": [
+    {"timestamp": "2024-01-10T10:00:00Z", "level": "INFO", "message": "Server started", "source": "system"},
+    {"timestamp": "2024-01-10T10:01:15Z", "level": "INFO", "message": "Database connected", "source": "database"},
+    {"timestamp": "2024-01-10T10:02:30Z", "level": "INFO", "message": "Cache initialized", "source": "cache"},
+    {"timestamp": "2024-01-10T10:05:00Z", "level": "WARN", "message": "High memory usage detected", "source": "monitor"},
+    {"timestamp": "2024-01-10T10:10:00Z", "level": "INFO", "message": "User login: alice@example.com", "source": "auth"},
+    {"timestamp": "2024-01-10T10:15:30Z", "level": "INFO", "message": "Order created: ORD-011", "source": "orders"},
+    {"timestamp": "2024-01-10T10:20:00Z", "level": "ERROR", "message": "Payment failed: timeout", "source": "payment"},
+    {"timestamp": "2024-01-10T10:20:05Z", "level": "INFO", "message": "Payment retry initiated", "source": "payment"},
+    {"timestamp": "2024-01-10T10:20:10Z", "level": "INFO", "message": "Payment successful", "source": "payment"},
+    {"timestamp": "2024-01-10T10:25:00Z", "level": "INFO", "message": "Email sent: order confirmation", "source": "notifications"},
+    {"timestamp": "2024-01-10T10:30:00Z", "level": "INFO", "message": "Inventory updated", "source": "inventory"},
+    {"timestamp": "2024-01-10T10:35:00Z", "level": "WARN", "message": "Low stock alert: P001", "source": "inventory"},
+    {"timestamp": "2024-01-10T10:40:00Z", "level": "INFO", "message": "Backup completed", "source": "system"},
+    {"timestamp": "2024-01-10T10:45:00Z", "level": "INFO", "message": "User logout: alice@example.com", "source": "auth"},
+    {"timestamp": "2024-01-10T10:50:00Z", "level": "INFO", "message": "Cache cleared", "source": "cache"},
+    {"timestamp": "2024-01-10T10:55:00Z", "level": "INFO", "message": "Scheduled task: cleanup", "source": "scheduler"},
+    {"timestamp": "2024-01-10T11:00:00Z", "level": "INFO", "message": "Health check passed", "source": "monitor"},
+    {"timestamp": "2024-01-10T11:05:00Z", "level": "DEBUG", "message": "API request: GET /products", "source": "api"},
+    {"timestamp": "2024-01-10T11:10:00Z", "level": "DEBUG", "message": "API request: POST /orders", "source": "api"},
+    {"timestamp": "2024-01-10T11:15:00Z", "level": "INFO", "message": "Report generated: daily_sales", "source": "reports"}
+  ],
+  "metadata": {
+    "version": "2.1.0",
+    "lastUpdated": "2024-01-10T12:00:00Z",
+    "author": "System",
+    "description": "Test data for JSON Editor with large node count",
+    "tags": ["test", "large", "demo"],
+    "nodeCount": "approximately 600+ nodes when fully expanded"
+  }
+}

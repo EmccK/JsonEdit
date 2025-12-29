@@ -11,7 +11,14 @@
       "mcp__chrome-devtools__list_console_messages",
       "Bash(npm run build)",
       "Bash(npx wrangler pages project create:*)",
-      "Bash(npx wrangler pages deploy:*)"
+      "Bash(npx wrangler pages deploy:*)",
+      "mcp__chrome-devtools__drag",
+      "WebSearch",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__upload_file",
+      "mcp__chrome-devtools__fill",
+      "mcp__chrome-devtools__press_key",
+      "mcp__chrome-devtools__evaluate_script"
     ]
   }
 }

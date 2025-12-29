@@ -62,12 +62,13 @@ const pushToHistory = (
   newNodes: JsonNode[]
 ): Partial<JsonStoreState> => {
   const newHistory = state.history.slice(0, state.historyIndex + 1);
-  newHistory.push(JSON.parse(JSON.stringify(newNodes)));
-  
+  // 使用 structuredClone 替代 JSON.parse(JSON.stringify())，性能更好
+  newHistory.push(structuredClone(newNodes));
+
   if (newHistory.length > MAX_HISTORY) {
     newHistory.shift();
   }
-  
+
   return {
     nodes: newNodes,
     history: newHistory,
@@ -83,7 +84,7 @@ export const useJsonStore = create<JsonStoreState & JsonStoreActions>(
 
     return {
       nodes: initialNodes,
-      history: [JSON.parse(JSON.stringify(initialNodes))],
+      history: [structuredClone(initialNodes)],
       historyIndex: 0,
       searchTerm: '',
       validationError: null,
@@ -290,7 +291,7 @@ export const useJsonStore = create<JsonStoreState & JsonStoreActions>(
         if (historyIndex > 0) {
           set({
             historyIndex: historyIndex - 1,
-            nodes: JSON.parse(JSON.stringify(history[historyIndex - 1])),
+            nodes: structuredClone(history[historyIndex - 1]),
           });
         }
       },
@@ -300,7 +301,7 @@ export const useJsonStore = create<JsonStoreState & JsonStoreActions>(
         if (historyIndex < history.length - 1) {
           set({
             historyIndex: historyIndex + 1,
-            nodes: JSON.parse(JSON.stringify(history[historyIndex + 1])),
+            nodes: structuredClone(history[historyIndex + 1]),
           });
         }
       },

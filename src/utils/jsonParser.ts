@@ -69,8 +69,14 @@ export const nodesToJson = (node: JsonNode): unknown => {
 
 export const findNodeById = (
   nodes: JsonNode[],
-  id: string
+  id: string,
+  index?: Map<string, JsonNode>
 ): JsonNode | undefined => {
+  // 如果提供了索引，直接使用索引查找（O(1)）
+  if (index) {
+    return index.get(id);
+  }
+  // 否则使用递归查找（O(n)）
   for (const node of nodes) {
     if (node.id === id) return node;
     if (node.children) {
@@ -197,5 +203,24 @@ export const reindexArrayChildren = (node: JsonNode): JsonNode => {
     };
   }
   return node;
+};
+
+// 从根节点查找指定节点的父节点（用于判断父节点类型）
+export const findParentFromRoot = (
+  root: JsonNode | undefined,
+  childId: string
+): JsonNode | null => {
+  if (!root) return null;
+
+  const search = (node: JsonNode): JsonNode | null => {
+    if (node.children?.some((c) => c.id === childId)) return node;
+    for (const child of node.children || []) {
+      const found = search(child);
+      if (found) return found;
+    }
+    return null;
+  };
+
+  return search(root);
 };
 

@@ -1,49 +1,30 @@
 import { useState, useRef, useEffect, memo } from 'react';
 import type { KeyboardEvent } from 'react';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { ChevronRight, ChevronDown, GripVertical } from 'lucide-react';
+import { ChevronRight, ChevronDown } from 'lucide-react';
 import type { JsonNode, JsonValueType } from '../../types/json';
 import { useJsonStore } from '../../store/jsonStore';
 import { NodeValue, TypeSelector } from './NodeValues';
 import { NodeActions } from './NodeActions';
 import { getDefaultValue, findParentFromRoot } from '../../utils/jsonParser';
 
-interface TreeNodeProps {
+interface VirtualTreeNodeProps {
   node: JsonNode;
   depth?: number;
-  isRoot?: boolean;
   searchTerm?: string;
   style?: React.CSSProperties;
 }
 
-// 使用 memo 优化，避免不必要的重渲染
-export const TreeNode = memo(function TreeNode({
+// 虚拟滚动专用节点组件（无拖拽功能）
+export const VirtualTreeNode = memo(function VirtualTreeNode({
   node,
   depth = 0,
-  isRoot = false,
   searchTerm = '',
   style,
-}: TreeNodeProps) {
+}: VirtualTreeNodeProps) {
   const { updateNode, deleteNode, duplicateNode, addChild, toggleExpand } = useJsonStore();
   const [isEditingKey, setIsEditingKey] = useState(false);
   const [keyValue, setKeyValue] = useState(node.key);
   const keyInputRef = useRef<HTMLInputElement>(null);
-
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: node.id });
-
-  const sortableStyle = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
 
   useEffect(() => {
     if (isEditingKey && keyInputRef.current) {
@@ -52,7 +33,6 @@ export const TreeNode = memo(function TreeNode({
     }
   }, [isEditingKey]);
 
-  // 同步外部 key 变化
   useEffect(() => {
     setKeyValue(node.key);
   }, [node.key]);
@@ -62,7 +42,6 @@ export const TreeNode = memo(function TreeNode({
 
   const handleKeyDoubleClick = () => {
     if (node.parentId) {
-      // 检查父节点是否为数组 - 不允许编辑数组索引
       const root = useJsonStore.getState().nodes[0];
       const parentNode = findParentFromRoot(root, node.id);
       if (parentNode?.type === 'array') return;
@@ -121,31 +100,19 @@ export const TreeNode = memo(function TreeNode({
     updateNode(node.id, updates);
   };
 
-  // 搜索高亮
   const matchesSearch =
     searchTerm &&
     (node.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
       String(node.value).toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
-    <div ref={setNodeRef} style={{ ...sortableStyle, ...style }} className="select-none">
+    <div style={style} className="select-none">
       <div
         className={`group flex items-center gap-2 py-1 px-2 rounded hover:bg-[var(--bg-secondary)] ${
           matchesSearch ? 'bg-[var(--accent)]/20 ring-1 ring-[var(--accent)]' : ''
         }`}
         style={{ paddingLeft: `${depth * 20 + 8}px` }}
       >
-        {/* 拖拽手柄 */}
-        {!isRoot && (
-          <button
-            {...attributes}
-            {...listeners}
-            className="cursor-grab active:cursor-grabbing text-[var(--text-muted)] hover:text-[var(--text-secondary)] p-0.5"
-          >
-            <GripVertical size={14} />
-          </button>
-        )}
-
         {/* 展开/折叠按钮 */}
         {hasChildren ? (
           <button
@@ -159,31 +126,27 @@ export const TreeNode = memo(function TreeNode({
         )}
 
         {/* 键名 */}
-        {!isRoot && (
-          <>
-            {isEditingKey ? (
-              <input
-                ref={keyInputRef}
-                type="text"
-                value={keyValue}
-                onChange={(e) => setKeyValue(e.target.value)}
-                onBlur={handleKeyBlur}
-                onKeyDown={handleKeyKeyDown}
-                className="bg-[var(--bg-tertiary)] border border-[var(--accent)] rounded px-1 py-0.5 text-sm outline-none min-w-[40px] text-[var(--key)]"
-                onClick={(e) => e.stopPropagation()}
-              />
-            ) : (
-              <span
-                className="text-[var(--key)] cursor-pointer hover:opacity-80"
-                onDoubleClick={handleKeyDoubleClick}
-                title="双击编辑键名"
-              >
-                {node.key}
-              </span>
-            )}
-            <span className="text-[var(--text-muted)]">:</span>
-          </>
+        {isEditingKey ? (
+          <input
+            ref={keyInputRef}
+            type="text"
+            value={keyValue}
+            onChange={(e) => setKeyValue(e.target.value)}
+            onBlur={handleKeyBlur}
+            onKeyDown={handleKeyKeyDown}
+            className="bg-[var(--bg-tertiary)] border border-[var(--accent)] rounded px-1 py-0.5 text-sm outline-none min-w-[40px] text-[var(--key)]"
+            onClick={(e) => e.stopPropagation()}
+          />
+        ) : (
+          <span
+            className="text-[var(--key)] cursor-pointer hover:opacity-80"
+            onDoubleClick={handleKeyDoubleClick}
+            title="双击编辑键名"
+          >
+            {node.key}
+          </span>
         )}
+        <span className="text-[var(--text-muted)]">:</span>
 
         {/* 类型选择器 */}
         <TypeSelector currentType={node.type} onTypeChange={handleTypeChange} />
@@ -197,13 +160,12 @@ export const TreeNode = memo(function TreeNode({
           onDelete={() => deleteNode(node.id)}
           onDuplicate={() => duplicateNode(node.id)}
           onAddChild={(type) => addChild(node.id, type)}
-          isRoot={isRoot}
+          isRoot={false}
         />
       </div>
     </div>
   );
 }, (prevProps, nextProps) => {
-  // 自定义比较函数，只在关键属性变化时重渲染
   return (
     prevProps.node.id === nextProps.node.id &&
     prevProps.node.key === nextProps.node.key &&
@@ -212,7 +174,8 @@ export const TreeNode = memo(function TreeNode({
     prevProps.node.expanded === nextProps.node.expanded &&
     prevProps.node.children?.length === nextProps.node.children?.length &&
     prevProps.depth === nextProps.depth &&
-    prevProps.isRoot === nextProps.isRoot &&
-    prevProps.searchTerm === nextProps.searchTerm
+    prevProps.searchTerm === nextProps.searchTerm &&
+    prevProps.style?.transform === nextProps.style?.transform &&
+    prevProps.style?.height === nextProps.style?.height
   );
 });
