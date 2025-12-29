@@ -1,0 +1,17 @@
+{
+  "name": "JSON 编辑器",
+  "short_name": "JSON Editor",
+  "description": "在线可视化 JSON 格式化、编辑与验证工具",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e1e2e",
+  "theme_color": "#1e1e2e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "lang": "zh-CN"
+}

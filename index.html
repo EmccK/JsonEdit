@@ -2,14 +2,165 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JSON 编辑器</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- 基础 SEO -->
+    <title>JSON 编辑器 - 在线可视化 JSON 格式化、编辑与验证工具</title>
+    <meta name="description" content="免费在线 JSON 编辑器，支持树形可视化编辑、拖拽排序、实时预览、语法高亮、导入导出。无需安装，打开即用的 JSON 格式化和验证工具。" />
+    <meta name="keywords" content="JSON编辑器,JSON格式化,JSON在线工具,JSON可视化,JSON验证,JSON树形编辑,JSON美化" />
+    <meta name="author" content="JsonEdit" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://json.emcck.com/" />
+
+    <!-- Open Graph (Facebook/LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JSON 编辑器 - 在线可视化 JSON 格式化工具" />
+    <meta property="og:description" content="免费在线 JSON 编辑器，支持树形可视化编辑、拖拽排序、实时预览。无需安装，打开即用。" />
+    <meta property="og:url" content="https://json.emcck.com/" />
+    <meta property="og:image" content="https://json.emcck.com/favicon.svg" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content="JSON 编辑器" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="JSON 编辑器 - 在线可视化 JSON 格式化工具" />
+    <meta name="twitter:description" content="免费在线 JSON 编辑器，支持树形可视化编辑、拖拽排序、实时预览。" />
+    <meta name="twitter:image" content="https://json.emcck.com/favicon.svg" />
+
+    <!-- 图标 -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#1e1e2e" />
+    <meta name="msapplication-TileColor" content="#1e1e2e" />
+
+    <!-- 字体预加载 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- JSON-LD 结构化数据: WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "JSON 编辑器",
+      "alternateName": "JSON Editor",
+      "description": "免费在线 JSON 编辑器，支持树形可视化编辑、拖拽排序、实时预览、语法高亮、导入导出功能。",
+      "url": "https://json.emcck.com/",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CNY"
+      },
+      "featureList": [
+        "树形视图编辑 JSON 结构",
+        "拖拽排序节点",
+        "双击编辑键名和值",
+        "复制/删除/添加节点",
+        "导入 JSON（粘贴或上传文件）",
+        "导出 JSON（下载或复制）",
+        "搜索过滤",
+        "撤销/重做操作",
+        "语法高亮预览"
+      ],
+      "inLanguage": "zh-CN",
+      "isAccessibleForFree": true
+    }
+    </script>
+
+    <!-- JSON-LD 结构化数据: FAQPage (GEO 优化) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "什么是 JSON 编辑器？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "JSON 编辑器是一个在线工具，用于可视化编辑、格式化和验证 JSON 数据。它提供树形视图，让您可以直观地查看和修改 JSON 结构，无需手动编写代码。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "如何使用这个 JSON 编辑器？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "您可以通过以下方式使用：1) 直接在编辑器中点击添加节点；2) 粘贴现有 JSON 文本导入；3) 上传 JSON 文件。编辑完成后可以导出或复制结果。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "这个工具支持哪些功能？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "支持的功能包括：树形可视化编辑、拖拽排序、双击编辑、节点复制/删除/添加、JSON 导入导出、搜索过滤、撤销重做（Ctrl+Z）、语法高亮预览等。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "JSON 编辑器是免费的吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "是的，这个 JSON 编辑器完全免费，无需注册，打开网页即可使用。所有数据处理都在浏览器本地完成，不会上传到服务器。"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- JSON-LD 结构化数据: HowTo (GEO 优化) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "如何使用 JSON 编辑器格式化 JSON",
+      "description": "使用在线 JSON 编辑器快速格式化和编辑 JSON 数据的步骤指南",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "导入 JSON",
+          "text": "点击导入按钮，粘贴 JSON 文本或上传 JSON 文件"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "编辑数据",
+          "text": "在树形视图中双击编辑键名或值，使用拖拽调整顺序"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "导出结果",
+          "text": "点击导出按钮下载 JSON 文件，或点击复制按钮复制到剪贴板"
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
+    <!-- 为搜索引擎提供的 noscript 内容 -->
+    <noscript>
+      <div style="padding: 20px; text-align: center;">
+        <h1>JSON 编辑器 - 在线可视化 JSON 格式化工具</h1>
+        <p>这是一个免费的在线 JSON 编辑器，支持以下功能：</p>
+        <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
+          <li>树形视图编辑 JSON 结构</li>
+          <li>拖拽排序节点</li>
+          <li>双击编辑键名和值</li>
+          <li>复制、删除、添加节点</li>
+          <li>导入 JSON（粘贴或上传文件）</li>
+          <li>导出 JSON（下载或复制）</li>
+          <li>搜索过滤功能</li>
+          <li>撤销/重做操作</li>
+          <li>语法高亮预览</li>
+        </ul>
+        <p>请启用 JavaScript 以使用此工具。</p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
