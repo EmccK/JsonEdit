@@ -12,8 +12,13 @@ import {
   AlertCircle,
   ChevronsUpDown,
   ChevronsDownUp,
+  Moon,
+  Sun,
+  Languages,
 } from 'lucide-react';
 import { useJsonStore } from '../../store/jsonStore';
+import { useSettingsStore } from '../../store/settingsStore';
+import { useTranslation } from '../../i18n';
 
 export function Toolbar() {
   const {
@@ -30,10 +35,17 @@ export function Toolbar() {
     collapseAll,
   } = useJsonStore();
 
+  const { resolvedTheme, toggleTheme, toggleLocale, locale } = useSettingsStore();
+  const { t } = useTranslation();
+
   const [showImportModal, setShowImportModal] = useState(false);
   const [importText, setImportText] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
+  const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 文件大小限制：10MB
+  const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -43,7 +55,7 @@ export function Toolbar() {
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
         return;
       }
-      
+
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         if (e.shiftKey) {
           e.preventDefault();
@@ -70,10 +82,20 @@ export function Toolbar() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 检查文件大小
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError(t('validation.fileTooLarge'));
+        setTimeout(() => setFileError(null), 3000);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (event) => {
         const content = event.target?.result as string;
         importJson(content);
+        setFileError(null);
       };
       reader.readAsText(file);
     }
@@ -108,7 +130,7 @@ export function Toolbar() {
       <div className="flex items-center justify-between px-4 py-2 bg-[var(--bg-secondary)] border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
           <FileJson className="text-[var(--accent)]" size={20} />
-          <span className="font-semibold text-[var(--text-primary)]">JSON 编辑器</span>
+          <span className="font-semibold text-[var(--text-primary)]">{t('app.title')}</span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -122,7 +144,7 @@ export function Toolbar() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="搜索..."
+              placeholder={t('toolbar.search')}
               className="pl-7 pr-3 py-1.5 text-sm bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-md outline-none focus:border-[var(--accent)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] w-40"
             />
             {searchTerm && (
@@ -142,7 +164,7 @@ export function Toolbar() {
             onClick={undo}
             disabled={!canUndo()}
             className="p-2 rounded hover:bg-[var(--bg-tertiary)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-secondary)]"
-            title="撤销 (Ctrl+Z)"
+            title={t('toolbar.undo')}
           >
             <Undo2 size={16} />
           </button>
@@ -150,7 +172,7 @@ export function Toolbar() {
             onClick={redo}
             disabled={!canRedo()}
             className="p-2 rounded hover:bg-[var(--bg-tertiary)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-secondary)]"
-            title="重做 (Ctrl+Shift+Z)"
+            title={t('toolbar.redo')}
           >
             <Redo2 size={16} />
           </button>
@@ -161,14 +183,14 @@ export function Toolbar() {
           <button
             onClick={expandAll}
             className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-            title="全部展开"
+            title={t('toolbar.expandAll')}
           >
             <ChevronsUpDown size={16} />
           </button>
           <button
             onClick={collapseAll}
             className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-            title="全部折叠"
+            title={t('toolbar.collapseAll')}
           >
             <ChevronsDownUp size={16} />
           </button>
@@ -179,7 +201,7 @@ export function Toolbar() {
           <button
             onClick={() => setShowImportModal(true)}
             className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-            title="导入 JSON"
+            title={t('toolbar.import')}
           >
             <Upload size={16} />
           </button>
@@ -194,21 +216,21 @@ export function Toolbar() {
             onClick={() => fileInputRef.current?.click()}
             className="px-3 py-1.5 text-sm rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border border-[var(--border)]"
           >
-            上传文件
+            {t('toolbar.uploadFile')}
           </button>
 
           {/* Export */}
           <button
             onClick={handleExport}
             className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-            title="导出 JSON"
+            title={t('toolbar.export')}
           >
             <Download size={16} />
           </button>
           <button
             onClick={handleCopy}
             className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] relative"
-            title="复制到剪贴板"
+            title={t('toolbar.copy')}
           >
             {copySuccess ? (
               <Check size={16} className="text-[var(--success)]" />
@@ -216,14 +238,35 @@ export function Toolbar() {
               <Copy size={16} />
             )}
           </button>
+
+          <div className="w-px h-6 bg-[var(--border)]" />
+
+          {/* Language Toggle */}
+          <button
+            onClick={toggleLocale}
+            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] flex items-center gap-1"
+            title={t('settings.language')}
+          >
+            <Languages size={16} />
+            <span className="text-xs">{locale === 'zh-CN' ? '中' : 'EN'}</span>
+          </button>
+
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
+            title={t('settings.theme')}
+          >
+            {resolvedTheme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
         </div>
       </div>
 
       {/* Validation Error */}
-      {validationError && (
+      {(validationError || fileError) && (
         <div className="flex items-center gap-2 px-4 py-2 bg-[var(--danger)]/10 border-b border-[var(--danger)]/30">
           <AlertCircle size={16} className="text-[var(--danger)]" />
-          <span className="text-sm text-[var(--danger)]">{validationError}</span>
+          <span className="text-sm text-[var(--danger)]">{validationError || fileError}</span>
         </div>
       )}
 
@@ -232,7 +275,7 @@ export function Toolbar() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-[var(--bg-secondary)] rounded-lg shadow-xl w-full max-w-lg mx-4 border border-[var(--border)]">
             <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
-              <h3 className="font-medium text-[var(--text-primary)]">导入 JSON</h3>
+              <h3 className="font-medium text-[var(--text-primary)]">{t('import.title')}</h3>
               <button
                 onClick={() => setShowImportModal(false)}
                 className="p-1 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)]"
@@ -244,7 +287,7 @@ export function Toolbar() {
               <textarea
                 value={importText}
                 onChange={(e) => setImportText(e.target.value)}
-                placeholder="粘贴 JSON 内容..."
+                placeholder={t('import.placeholder')}
                 className="w-full h-64 p-3 text-sm font-mono bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-md outline-none focus:border-[var(--accent)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] resize-none"
               />
             </div>
@@ -253,13 +296,13 @@ export function Toolbar() {
                 onClick={() => setShowImportModal(false)}
                 className="px-4 py-2 text-sm rounded-md hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
               >
-                取消
+                {t('import.cancel')}
               </button>
               <button
                 onClick={handleImport}
                 className="px-4 py-2 text-sm rounded-md bg-[var(--accent)] text-[var(--bg-primary)] font-medium hover:opacity-90"
               >
-                导入
+                {t('import.confirm')}
               </button>
             </div>
           </div>
@@ -268,4 +311,3 @@ export function Toolbar() {
     </>
   );
 }
-

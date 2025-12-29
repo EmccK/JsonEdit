@@ -1,5 +1,6 @@
 import { useMemo, useDeferredValue, useState, useEffect } from 'react';
 import { useJsonStore } from '../../store/jsonStore';
+import { useTranslation } from '../../i18n';
 
 interface TokenProps {
   type: 'key' | 'string' | 'number' | 'boolean' | 'null' | 'punctuation';
@@ -138,6 +139,7 @@ export function JsonPreview() {
   const getJson = useJsonStore((state) => state.getJson);
   const nodes = useJsonStore((state) => state.nodes);
   const [isUpdating, setIsUpdating] = useState(false);
+  const { t } = useTranslation();
 
   // 使用 useDeferredValue 实现防抖效果
   const deferredNodes = useDeferredValue(nodes);
@@ -161,10 +163,10 @@ export function JsonPreview() {
   // 大文件时截断预览
   const displayString = useMemo(() => {
     if (isLargeFile) {
-      return jsonString.slice(0, PREVIEW_TRUNCATE_LENGTH) + '\n\n... (内容过长，已截断)';
+      return jsonString.slice(0, PREVIEW_TRUNCATE_LENGTH) + '\n\n' + t('preview.truncated');
     }
     return jsonString;
-  }, [jsonString, isLargeFile]);
+  }, [jsonString, isLargeFile, t]);
 
   const highlighted = useMemo(() => {
     return syntaxHighlight(displayString);
@@ -175,19 +177,19 @@ export function JsonPreview() {
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-[var(--text-secondary)]">
-            预览
+            {t('preview.title')}
             {isUpdating && (
-              <span className="ml-2 text-xs text-[var(--text-muted)]">更新中...</span>
+              <span className="ml-2 text-xs text-[var(--text-muted)]">{t('preview.updating')}</span>
             )}
           </h3>
           <span className="text-xs text-[var(--text-muted)]">
-            {jsonString.length.toLocaleString()} 字符
-            {isLargeFile && ' (大文件)'}
+            {jsonString.length.toLocaleString()} {t('preview.characters')}
+            {isLargeFile && ` (${t('preview.largeFile')})`}
           </span>
         </div>
         {isLargeFile && (
           <div className="mb-3 px-2 py-1 bg-[var(--accent)]/10 rounded text-xs text-[var(--text-muted)]">
-            文件较大，预览已简化以提升性能
+            {t('preview.largeFileHint')}
           </div>
         )}
         <pre className="text-sm leading-relaxed font-mono whitespace-pre-wrap break-all">

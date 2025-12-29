@@ -20,6 +20,7 @@ import { TreeNode } from './TreeNode';
 import { VirtualTreeNode } from './VirtualTreeNode';
 import { findNodeById, findParentNode } from '../../utils/jsonParser';
 import { flattenVisibleNodes, countNodes, type FlatNode } from '../../utils/virtualTree';
+import { useTranslation } from '../../i18n';
 
 // 每行高度（像素）
 const ROW_HEIGHT = 32;
@@ -30,6 +31,7 @@ const VIRTUAL_THRESHOLD = 500;
 
 export function TreeEditor() {
   const { nodes, moveNode, searchTerm, updateNode } = useJsonStore();
+  const { t } = useTranslation();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [wasExpanded, setWasExpanded] = useState<boolean>(false);
   const parentRef = useRef<HTMLDivElement>(null);
@@ -139,7 +141,7 @@ export function TreeEditor() {
             />
             {useVirtual && (
               <div className="mt-1 text-xs text-[var(--text-muted)]">
-                大数据模式 ({flatNodes.length}/{totalNodeCount} 可见节点) - 折叠部分节点可启用拖拽
+                {t('editor.virtualMode')} ({flatNodes.length}/{totalNodeCount} {t('editor.visibleNodes')}) - {t('editor.virtualHint')}
               </div>
             )}
           </div>

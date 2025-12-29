@@ -1,6 +1,7 @@
 import { Plus, Copy, Trash2 } from 'lucide-react';
 import type { JsonValueType } from '../../types/json';
 import { useState } from 'react';
+import { useTranslation } from '../../i18n';
 
 interface NodeActionsProps {
   nodeType: JsonValueType;
@@ -18,6 +19,7 @@ export function NodeActions({
   isRoot,
 }: NodeActionsProps) {
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const { t } = useTranslation();
   const canAddChildren = nodeType === 'object' || nodeType === 'array';
   const types: JsonValueType[] = ['string', 'number', 'boolean', 'null', 'object', 'array'];
 
@@ -31,7 +33,7 @@ export function NodeActions({
               setShowAddMenu(!showAddMenu);
             }}
             className="p-1 rounded hover:bg-[var(--bg-tertiary)] text-[var(--success)]"
-            title="添加子项"
+            title={t('node.addChild')}
           >
             <Plus size={14} />
           </button>
@@ -42,17 +44,17 @@ export function NodeActions({
                 onClick={() => setShowAddMenu(false)}
               />
               <div className="absolute right-0 top-full mt-1 z-20 bg-[var(--bg-secondary)] border border-[var(--border)] rounded shadow-lg py-1 min-w-[80px]">
-                {types.map((t) => (
+                {types.map((type) => (
                   <button
-                    key={t}
+                    key={type}
                     onClick={(e) => {
                       e.stopPropagation();
-                      onAddChild(t);
+                      onAddChild(type);
                       setShowAddMenu(false);
                     }}
                     className="block w-full text-left px-3 py-1 text-sm hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
                   >
-                    {t}
+                    {type}
                   </button>
                 ))}
               </div>
@@ -66,7 +68,7 @@ export function NodeActions({
           onDuplicate();
         }}
         className="p-1 rounded hover:bg-[var(--bg-tertiary)] text-[var(--accent)]"
-        title="复制节点"
+        title={t('node.duplicate')}
       >
         <Copy size={14} />
       </button>
@@ -77,7 +79,7 @@ export function NodeActions({
             onDelete();
           }}
           className="p-1 rounded hover:bg-[var(--bg-tertiary)] text-[var(--danger)]"
-          title="删除节点"
+          title={t('node.delete')}
         >
           <Trash2 size={14} />
         </button>
@@ -85,4 +87,3 @@ export function NodeActions({
     </div>
   );
 }
-
