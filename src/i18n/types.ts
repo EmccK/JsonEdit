@@ -43,6 +43,9 @@ export interface Translations {
   'node.addChild': string;
   'node.duplicate': string;
   'node.delete': string;
+  'node.copyValue': string;
+  'node.copySuccess': string;
+  'node.copyFailed': string;
 
   // 验证
   'validation.invalidJson': string;

@@ -41,6 +41,9 @@ export const enUS: Translations = {
   'node.addChild': 'Add Child',
   'node.duplicate': 'Duplicate',
   'node.delete': 'Delete',
+  'node.copyValue': 'Copy this node',
+  'node.copySuccess': 'Copied',
+  'node.copyFailed': 'Copy failed',
 
   // Validation
   'validation.invalidJson': 'Invalid JSON',

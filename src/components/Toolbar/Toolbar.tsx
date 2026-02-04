@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import {
-  Upload,
   Download,
   Copy,
   Undo2,
@@ -15,6 +14,8 @@ import {
   Moon,
   Sun,
   Languages,
+  ClipboardPaste,
+  FolderOpen,
 } from 'lucide-react';
 import { useJsonStore } from '../../store/jsonStore';
 import { useSettingsStore } from '../../store/settingsStore';
@@ -128,14 +129,119 @@ export function Toolbar() {
   return (
     <>
       <div className="flex items-center justify-between px-4 py-2 bg-[var(--bg-secondary)] border-b border-[var(--border)]">
-        <div className="flex items-center gap-2">
+        {/* 左侧: 标题 + 操作按钮 + 搜索 */}
+        <div className="flex items-center gap-1">
+          {/* 标题 */}
           <FileJson className="text-[var(--accent)]" size={20} />
-          <span className="font-semibold text-[var(--text-primary)]">{t('app.title')}</span>
-        </div>
+          <span className="font-semibold text-[var(--text-primary)] mr-2">{t('app.title')}</span>
 
-        <div className="flex items-center gap-2">
-          {/* Search */}
-          <div className="relative">
+          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
+
+          {/* 历史操作组 */}
+          <div className="flex items-center gap-0.5">
+            <button
+              onClick={undo}
+              disabled={!canUndo()}
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-secondary)]"
+              title={t('toolbar.undo')}
+            >
+              <Undo2 size={16} />
+            </button>
+            <button
+              onClick={redo}
+              disabled={!canRedo()}
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-secondary)]"
+              title={t('toolbar.redo')}
+            >
+              <Redo2 size={16} />
+            </button>
+          </div>
+
+          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
+
+          {/* 视图操作组 */}
+          <div className="flex items-center gap-0.5">
+            <button
+              onClick={expandAll}
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
+              title={t('toolbar.expandAll')}
+            >
+              <ChevronsUpDown size={16} />
+            </button>
+            <button
+              onClick={collapseAll}
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
+              title={t('toolbar.collapseAll')}
+            >
+              <ChevronsDownUp size={16} />
+            </button>
+          </div>
+
+          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
+
+          {/* 主要操作: 导入数据 + 上传文件 + 复制 */}
+          <div className="flex items-center gap-0.5">
+            {/* 导入数据 */}
+            <button
+              onClick={() => setShowImportModal(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+            >
+              <ClipboardPaste size={15} />
+              <span>{t('toolbar.import')}</span>
+            </button>
+            {/* 上传文件 - 图标按钮 */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
+              title={t('toolbar.uploadFile')}
+            >
+              <FolderOpen size={16} />
+            </button>
+            <button
+              onClick={handleCopy}
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] relative"
+              title={t('toolbar.copy')}
+            >
+              {copySuccess ? (
+                <Check size={16} className="text-[var(--success)]" />
+              ) : (
+                <Copy size={16} />
+              )}
+            </button>
+          </div>
+
+          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
+
+          {/* 设置组 */}
+          <div className="flex items-center gap-0.5">
+            <button
+              onClick={toggleLocale}
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] flex items-center gap-1"
+              title={t('settings.language')}
+            >
+              <Languages size={16} />
+              <span className="text-xs">{locale === 'zh-CN' ? '中' : 'EN'}</span>
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
+              title={t('settings.theme')}
+            >
+              {resolvedTheme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+            </button>
+          </div>
+
+          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
+
+          {/* 搜索 */}
+          <div className="relative ml-1">
             <Search
               size={14}
               className="absolute left-2 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
@@ -156,110 +262,17 @@ export function Toolbar() {
               </button>
             )}
           </div>
-
-          <div className="w-px h-6 bg-[var(--border)]" />
-
-          {/* Undo/Redo */}
-          <button
-            onClick={undo}
-            disabled={!canUndo()}
-            className="p-2 rounded hover:bg-[var(--bg-tertiary)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-secondary)]"
-            title={t('toolbar.undo')}
-          >
-            <Undo2 size={16} />
-          </button>
-          <button
-            onClick={redo}
-            disabled={!canRedo()}
-            className="p-2 rounded hover:bg-[var(--bg-tertiary)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-secondary)]"
-            title={t('toolbar.redo')}
-          >
-            <Redo2 size={16} />
-          </button>
-
-          <div className="w-px h-6 bg-[var(--border)]" />
-
-          {/* Expand/Collapse All */}
-          <button
-            onClick={expandAll}
-            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-            title={t('toolbar.expandAll')}
-          >
-            <ChevronsUpDown size={16} />
-          </button>
-          <button
-            onClick={collapseAll}
-            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-            title={t('toolbar.collapseAll')}
-          >
-            <ChevronsDownUp size={16} />
-          </button>
-
-          <div className="w-px h-6 bg-[var(--border)]" />
-
-          {/* Import */}
-          <button
-            onClick={() => setShowImportModal(true)}
-            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-            title={t('toolbar.import')}
-          >
-            <Upload size={16} />
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="px-3 py-1.5 text-sm rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border border-[var(--border)]"
-          >
-            {t('toolbar.uploadFile')}
-          </button>
-
-          {/* Export */}
-          <button
-            onClick={handleExport}
-            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-            title={t('toolbar.export')}
-          >
-            <Download size={16} />
-          </button>
-          <button
-            onClick={handleCopy}
-            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] relative"
-            title={t('toolbar.copy')}
-          >
-            {copySuccess ? (
-              <Check size={16} className="text-[var(--success)]" />
-            ) : (
-              <Copy size={16} />
-            )}
-          </button>
-
-          <div className="w-px h-6 bg-[var(--border)]" />
-
-          {/* Language Toggle */}
-          <button
-            onClick={toggleLocale}
-            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] flex items-center gap-1"
-            title={t('settings.language')}
-          >
-            <Languages size={16} />
-            <span className="text-xs">{locale === 'zh-CN' ? '中' : 'EN'}</span>
-          </button>
-
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-            title={t('settings.theme')}
-          >
-            {resolvedTheme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
-          </button>
         </div>
+
+        {/* 右侧: 仅导出按钮 */}
+        <button
+          onClick={handleExport}
+          className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+          title={t('toolbar.export')}
+        >
+          <Download size={16} />
+          <span>{t('toolbar.export')}</span>
+        </button>
       </div>
 
       {/* Validation Error */}
@@ -272,8 +285,14 @@ export function Toolbar() {
 
       {/* Import Modal */}
       {showImportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-[var(--bg-secondary)] rounded-lg shadow-xl w-full max-w-lg mx-4 border border-[var(--border)]">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => setShowImportModal(false)}
+        >
+          <div
+            className="bg-[var(--bg-secondary)] rounded-lg shadow-xl w-full max-w-lg mx-4 border border-[var(--border)]"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
               <h3 className="font-medium text-[var(--text-primary)]">{t('import.title')}</h3>
               <button
@@ -300,7 +319,7 @@ export function Toolbar() {
               </button>
               <button
                 onClick={handleImport}
-                className="px-4 py-2 text-sm rounded-md bg-[var(--accent)] text-[var(--bg-primary)] font-medium hover:opacity-90"
+                className="px-4 py-2 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
               >
                 {t('import.confirm')}
               </button>

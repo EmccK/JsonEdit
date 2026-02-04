@@ -34,6 +34,7 @@ interface JsonStoreState {
   historyIndex: number;
   searchTerm: string;
   validationError: string | null;
+  selectedNodeId: string | null;
 }
 
 interface JsonStoreActions {
@@ -48,6 +49,7 @@ interface JsonStoreActions {
   expandAll: () => void;
   collapseAll: () => void;
   setSearchTerm: (term: string) => void;
+  setSelectedNodeId: (id: string | null) => void;
   undo: () => void;
   redo: () => void;
   canUndo: () => boolean;
@@ -56,6 +58,15 @@ interface JsonStoreActions {
 }
 
 const MAX_HISTORY = 50;
+
+// 递归设置节点的展开状态
+const setExpandedRecursive = (nodeList: JsonNode[], expanded: boolean): JsonNode[] => {
+  return nodeList.map((node) => ({
+    ...node,
+    expanded: node.children ? expanded : node.expanded,
+    children: node.children ? setExpandedRecursive(node.children, expanded) : undefined,
+  }));
+};
 
 const pushToHistory = (
   state: JsonStoreState,
@@ -88,6 +99,7 @@ export const useJsonStore = create<JsonStoreState & JsonStoreActions>(
       historyIndex: 0,
       searchTerm: '',
       validationError: null,
+      selectedNodeId: null,
 
       setNodes: (nodes) => {
         set((state) => pushToHistory(state, nodes));
@@ -260,30 +272,20 @@ export const useJsonStore = create<JsonStoreState & JsonStoreActions>(
 
       expandAll: () => {
         const { nodes } = get();
-        const setExpandedRecursive = (nodeList: JsonNode[], expanded: boolean): JsonNode[] => {
-          return nodeList.map((node) => ({
-            ...node,
-            expanded: node.children ? expanded : node.expanded,
-            children: node.children ? setExpandedRecursive(node.children, expanded) : undefined,
-          }));
-        };
         set({ nodes: setExpandedRecursive(nodes, true) });
       },
 
       collapseAll: () => {
         const { nodes } = get();
-        const setExpandedRecursive = (nodeList: JsonNode[], expanded: boolean): JsonNode[] => {
-          return nodeList.map((node) => ({
-            ...node,
-            expanded: node.children ? expanded : node.expanded,
-            children: node.children ? setExpandedRecursive(node.children, expanded) : undefined,
-          }));
-        };
         set({ nodes: setExpandedRecursive(nodes, false) });
       },
 
       setSearchTerm: (term) => {
         set({ searchTerm: term });
+      },
+
+      setSelectedNodeId: (id) => {
+        set({ selectedNodeId: id });
       },
 
       undo: () => {

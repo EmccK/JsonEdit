@@ -224,3 +224,30 @@ export const findParentFromRoot = (
   return search(root);
 };
 
+// 获取节点的路径（key 数组），用于在 JSON 中定位
+export const getNodePath = (
+  nodes: JsonNode[],
+  nodeId: string
+): string[] => {
+  const path: string[] = [];
+
+  const findPath = (nodeList: JsonNode[], targetId: string): boolean => {
+    for (const node of nodeList) {
+      if (node.id === targetId) {
+        path.push(node.key);
+        return true;
+      }
+      if (node.children) {
+        if (findPath(node.children, targetId)) {
+          path.unshift(node.key);
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  findPath(nodes, nodeId);
+  return path;
+};
+

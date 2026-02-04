@@ -62,16 +62,18 @@ export function NodeActions({
           )}
         </div>
       )}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDuplicate();
-        }}
-        className="p-1 rounded hover:bg-[var(--bg-tertiary)] text-[var(--accent)]"
-        title={t('node.duplicate')}
-      >
-        <Copy size={14} />
-      </button>
+      {!isRoot && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDuplicate();
+          }}
+          className="p-1 rounded hover:bg-[var(--bg-tertiary)] text-[var(--accent)]"
+          title={t('node.duplicate')}
+        >
+          <Copy size={14} />
+        </button>
+      )}
       {!isRoot && (
         <button
           onClick={(e) => {

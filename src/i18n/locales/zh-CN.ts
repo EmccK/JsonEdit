@@ -41,6 +41,9 @@ export const zhCN: Translations = {
   'node.addChild': '添加子项',
   'node.duplicate': '复制节点',
   'node.delete': '删除节点',
+  'node.copyValue': '复制此节点',
+  'node.copySuccess': '已复制',
+  'node.copyFailed': '复制失败',
 
   // 验证
   'validation.invalidJson': '无效的 JSON',

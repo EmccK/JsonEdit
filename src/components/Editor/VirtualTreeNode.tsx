@@ -23,7 +23,8 @@ export const VirtualTreeNode = memo(function VirtualTreeNode({
 }: VirtualTreeNodeProps) {
   const { updateNode, deleteNode, duplicateNode, addChild, toggleExpand } = useJsonStore();
   const [isEditingKey, setIsEditingKey] = useState(false);
-  const [keyValue, setKeyValue] = useState(node.key);
+  // 仅在编辑时使用本地状态，非编辑时直接使用 node.key
+  const [editingKeyValue, setEditingKeyValue] = useState('');
   const keyInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -32,10 +33,6 @@ export const VirtualTreeNode = memo(function VirtualTreeNode({
       keyInputRef.current.select();
     }
   }, [isEditingKey]);
-
-  useEffect(() => {
-    setKeyValue(node.key);
-  }, [node.key]);
 
   const hasChildren = node.type === 'object' || node.type === 'array';
   const isExpanded = node.expanded !== false;
@@ -46,7 +43,7 @@ export const VirtualTreeNode = memo(function VirtualTreeNode({
       const parentNode = findParentFromRoot(root, node.id);
       if (parentNode?.type === 'array') return;
     }
-    setKeyValue(node.key);
+    setEditingKeyValue(node.key);
     setIsEditingKey(true);
   };
 
@@ -64,8 +61,8 @@ export const VirtualTreeNode = memo(function VirtualTreeNode({
 
   const commitKeyChange = () => {
     setIsEditingKey(false);
-    if (keyValue.trim() && keyValue !== node.key) {
-      updateNode(node.id, { key: keyValue.trim() });
+    if (editingKeyValue.trim() && editingKeyValue !== node.key) {
+      updateNode(node.id, { key: editingKeyValue.trim() });
     }
   };
 
@@ -130,8 +127,8 @@ export const VirtualTreeNode = memo(function VirtualTreeNode({
           <input
             ref={keyInputRef}
             type="text"
-            value={keyValue}
-            onChange={(e) => setKeyValue(e.target.value)}
+            value={editingKeyValue}
+            onChange={(e) => setEditingKeyValue(e.target.value)}
             onBlur={handleKeyBlur}
             onKeyDown={handleKeyKeyDown}
             className="bg-[var(--bg-tertiary)] border border-[var(--accent)] rounded px-1 py-0.5 text-sm outline-none min-w-[40px] text-[var(--key)]"

@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import type { KeyboardEvent } from 'react';
+import { Type, Hash, ToggleLeft, CircleSlash, Braces, Brackets } from 'lucide-react';
 import type { JsonValueType } from '../../types/json';
 
 interface NodeValueProps {
   value: unknown;
   type: JsonValueType;
   onChange: (value: unknown, newType?: JsonValueType) => void;
-  isArrayChild?: boolean;
 }
 
 const typeColors: Record<JsonValueType, string> = {
@@ -16,6 +16,33 @@ const typeColors: Record<JsonValueType, string> = {
   null: 'text-[var(--null)]',
   object: 'text-[var(--text-secondary)]',
   array: 'text-[var(--text-secondary)]',
+};
+
+// 类型图标映射（带颜色）
+const TypeIcon = ({ type, colored = false }: { type: JsonValueType; colored?: boolean }) => {
+  const iconProps = { size: 12, strokeWidth: 2 };
+  const colorClass = colored ? typeColors[type] : '';
+
+  const icon = (() => {
+    switch (type) {
+      case 'string':
+        return <Type {...iconProps} />;
+      case 'number':
+        return <Hash {...iconProps} />;
+      case 'boolean':
+        return <ToggleLeft {...iconProps} />;
+      case 'null':
+        return <CircleSlash {...iconProps} />;
+      case 'object':
+        return <Braces {...iconProps} />;
+      case 'array':
+        return <Brackets {...iconProps} />;
+      default:
+        return null;
+    }
+  })();
+
+  return <span className={colorClass}>{icon}</span>;
 };
 
 export function NodeValue({ value, type, onChange }: NodeValueProps) {
@@ -102,9 +129,8 @@ export function NodeValue({ value, type, onChange }: NodeValueProps) {
 
   return (
     <span
-      className={`${typeColors[type]} cursor-pointer hover:opacity-80 select-none`}
+      className={`${typeColors[type]} cursor-text hover:opacity-80 select-none truncate`}
       onDoubleClick={handleDoubleClick}
-      title="双击编辑"
     >
       {displayValue()}
     </span>
@@ -124,17 +150,18 @@ export function TypeSelector({ currentType, onTypeChange }: TypeSelectorProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="text-xs px-1.5 py-0.5 rounded bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-secondary)] border border-transparent hover:border-[var(--border)]"
+        className="p-0.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] rounded cursor-pointer transition-colors"
+        title={currentType}
       >
-        {currentType}
+        <TypeIcon type={currentType} colored />
       </button>
       {isOpen && (
         <>
-          <div 
-            className="fixed inset-0 z-10" 
-            onClick={() => setIsOpen(false)} 
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => setIsOpen(false)}
           />
-          <div className="absolute left-0 top-full mt-1 z-20 bg-[var(--bg-secondary)] border border-[var(--border)] rounded shadow-lg py-1 min-w-[80px]">
+          <div className="absolute left-0 top-full mt-1 z-20 bg-[var(--bg-secondary)] border border-[var(--border)] rounded shadow-lg py-1 min-w-[100px]">
             {types.map((t) => (
               <button
                 key={t}
@@ -142,11 +169,12 @@ export function TypeSelector({ currentType, onTypeChange }: TypeSelectorProps) {
                   onTypeChange(t);
                   setIsOpen(false);
                 }}
-                className={`block w-full text-left px-3 py-1 text-sm hover:bg-[var(--bg-tertiary)] ${
+                className={`flex items-center gap-2 w-full text-left px-3 py-1 text-sm hover:bg-[var(--bg-tertiary)] ${
                   t === currentType ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'
                 }`}
               >
-                {t}
+                <TypeIcon type={t} colored />
+                <span>{t}</span>
               </button>
             ))}
           </div>
