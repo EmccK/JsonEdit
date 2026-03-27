@@ -283,7 +283,7 @@ export function JsonPreview() {
   }, [selectedNodeId, nodes, jsonString, isLargeFile]);
 
   return (
-    <div className="h-full overflow-auto bg-[var(--bg-secondary)] border-l border-[var(--border)]">
+    <div className="h-full overflow-auto bg-[var(--bg-secondary)]">
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-[var(--text-secondary)]">

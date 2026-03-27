@@ -21,7 +21,9 @@
       "mcp__chrome-devtools__evaluate_script",
       "mcp__chrome-devtools__new_page",
       "mcp__chrome-devtools__close_page",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx wrangler login:*)"
     ]
   }
 }
