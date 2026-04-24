@@ -184,17 +184,17 @@ export function Toolbar() {
           <div className="flex items-center gap-1">
             <button
               onClick={expandAll}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
               title={t('toolbar.expandAll')}
             >
-              <ChevronsUpDown size={15} />
+              <ChevronsUpDown size={16} />
             </button>
             <button
               onClick={collapseAll}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
               title={t('toolbar.collapseAll')}
             >
-              <ChevronsDownUp size={15} />
+              <ChevronsDownUp size={16} />
             </button>
           </div>
 
