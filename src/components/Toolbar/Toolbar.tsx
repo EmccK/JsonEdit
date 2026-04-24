@@ -188,7 +188,6 @@ export function Toolbar() {
               title={t('toolbar.expandAll')}
             >
               <ChevronsUpDown size={15} />
-              {t('toolbar.expandAll')}
             </button>
             <button
               onClick={collapseAll}
@@ -196,7 +195,6 @@ export function Toolbar() {
               title={t('toolbar.collapseAll')}
             >
               <ChevronsDownUp size={15} />
-              {t('toolbar.collapseAll')}
             </button>
           </div>
 
