@@ -12,6 +12,7 @@ export const zhCN: Translations = {
   'toolbar.expandAll': '全部展开',
   'toolbar.collapseAll': '全部折叠',
   'toolbar.import': '导入 JSON',
+  'toolbar.quickImport': '粘贴 JSON 后回车导入...',
   'toolbar.uploadFile': '上传文件',
   'toolbar.export': '导出 JSON',
   'toolbar.copy': '复制到剪贴板',

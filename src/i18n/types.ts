@@ -14,6 +14,7 @@ export interface Translations {
   'toolbar.expandAll': string;
   'toolbar.collapseAll': string;
   'toolbar.import': string;
+  'toolbar.quickImport': string;
   'toolbar.uploadFile': string;
   'toolbar.export': string;
   'toolbar.copy': string;

@@ -1,4 +1,4 @@
-import { useMemo, useDeferredValue } from 'react';
+import { useMemo, useDeferredValue, useRef, useEffect } from 'react';
 import { useJsonStore } from '../../store/jsonStore';
 import { useTranslation } from '../../i18n';
 import { getNodePath, nodesToJson } from '../../utils/jsonParser';
@@ -246,6 +246,7 @@ export function JsonPreview() {
   const nodes = useJsonStore((state) => state.nodes);
   const selectedNodeId = useJsonStore((state) => state.selectedNodeId);
   const { t } = useTranslation();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // 使用 useDeferredValue 实现防抖效果
   const deferredNodes = useDeferredValue(nodes);
@@ -282,8 +283,15 @@ export function JsonPreview() {
     return findLineRangeForPath(jsonString, path);
   }, [selectedNodeId, nodes, jsonString, isLargeFile]);
 
+  // 当选中行范围变化时，自动滚动到目标行并居中显示
+  useEffect(() => {
+    if (!selectedLineRange || !scrollContainerRef.current) return;
+    const el = scrollContainerRef.current.querySelector('[data-highlight-start="true"]');
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [selectedLineRange]);
+
   return (
-    <div className="h-full overflow-auto bg-[var(--bg-secondary)]">
+    <div ref={scrollContainerRef} className="h-full overflow-auto bg-[var(--bg-secondary)]">
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-[var(--text-secondary)]">
@@ -324,6 +332,7 @@ export function JsonPreview() {
               {highlightedLines.map((lineTokens, i) => (
                 <div
                   key={i}
+                  data-highlight-start={selectedLineRange && i === selectedLineRange.start ? 'true' : undefined}
                   className={`${
                     selectedLineRange && i >= selectedLineRange.start && i <= selectedLineRange.end
                       ? 'bg-[var(--accent)]/10'

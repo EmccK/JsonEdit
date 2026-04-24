@@ -12,6 +12,7 @@ export const enUS: Translations = {
   'toolbar.expandAll': 'Expand All',
   'toolbar.collapseAll': 'Collapse All',
   'toolbar.import': 'Import JSON',
+  'toolbar.quickImport': 'Paste JSON and press Enter...',
   'toolbar.uploadFile': 'Upload File',
   'toolbar.export': 'Export JSON',
   'toolbar.copy': 'Copy to Clipboard',

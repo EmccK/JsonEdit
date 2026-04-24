@@ -41,6 +41,7 @@ export function Toolbar() {
 
   const [showImportModal, setShowImportModal] = useState(false);
   const [importText, setImportText] = useState('');
+  const [quickImportText, setQuickImportText] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
   const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -77,6 +78,13 @@ export function Toolbar() {
       importJson(importText);
       setShowImportModal(false);
       setImportText('');
+    }
+  };
+
+  const handleQuickImport = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && quickImportText.trim()) {
+      importJson(quickImportText);
+      setQuickImportText('');
     }
   };
 
@@ -129,7 +137,7 @@ export function Toolbar() {
   return (
     <>
       <div className="flex items-center justify-between px-4 py-2 bg-[var(--bg-secondary)] border-b border-[var(--border)]">
-        {/* 左侧: 标题 + 操作按钮 + 搜索 */}
+        {/* 左侧: 按使用频率排列 */}
         <div className="flex items-center gap-1">
           {/* 标题 */}
           <FileJson className="text-[var(--accent)]" size={20} />
@@ -137,7 +145,120 @@ export function Toolbar() {
 
           <div className="w-px h-6 bg-[var(--border)] opacity-50" />
 
-          {/* 历史操作组 */}
+          {/* 第一优先: 快速导入输入框 + 导入JSON按钮 */}
+          <div className="flex items-center gap-1">
+            <div className="relative">
+              <ClipboardPaste
+                size={14}
+                className="absolute left-2 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+              />
+              <input
+                type="text"
+                value={quickImportText}
+                onChange={(e) => setQuickImportText(e.target.value)}
+                onKeyDown={handleQuickImport}
+                placeholder={t('toolbar.quickImport')}
+                className="pl-7 pr-6 py-1.5 text-sm bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-md outline-none focus:border-[var(--accent)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] w-56"
+              />
+              {quickImportText && (
+                <button
+                  onClick={() => setQuickImportText('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+                >
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => setShowImportModal(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+            >
+              <ClipboardPaste size={15} />
+              <span>{t('toolbar.import')}</span>
+            </button>
+          </div>
+
+          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
+
+          {/* 第二优先: 展开/折叠 */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={expandAll}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+              title={t('toolbar.expandAll')}
+            >
+              <ChevronsUpDown size={15} />
+              {t('toolbar.expandAll')}
+            </button>
+            <button
+              onClick={collapseAll}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+              title={t('toolbar.collapseAll')}
+            >
+              <ChevronsDownUp size={15} />
+              {t('toolbar.collapseAll')}
+            </button>
+          </div>
+
+          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
+
+          {/* 第三优先: 搜索 */}
+          <div className="relative">
+            <Search
+              size={14}
+              className="absolute left-2 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+            />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder={t('toolbar.search')}
+              className="pl-7 pr-6 py-1.5 text-sm bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-md outline-none focus:border-[var(--accent)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] w-40"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+              >
+                <X size={12} />
+              </button>
+            )}
+          </div>
+
+          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
+
+          {/* 第四优先: 上传文件 + 复制（纯图标） */}
+          <div className="flex items-center gap-0.5">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
+              title={t('toolbar.uploadFile')}
+            >
+              <FolderOpen size={16} />
+            </button>
+            <button
+              onClick={handleCopy}
+              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
+              title={t('toolbar.copy')}
+            >
+              {copySuccess ? (
+                <Check size={16} className="text-[var(--success)]" />
+              ) : (
+                <Copy size={16} />
+              )}
+            </button>
+          </div>
+
+          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
+
+          {/* 最低优先: 撤销/重做（纯图标） */}
           <div className="flex items-center gap-0.5">
             <button
               onClick={undo}
@@ -156,123 +277,35 @@ export function Toolbar() {
               <Redo2 size={16} />
             </button>
           </div>
-
-          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
-
-          {/* 视图操作组 */}
-          <div className="flex items-center gap-0.5">
-            <button
-              onClick={expandAll}
-              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-              title={t('toolbar.expandAll')}
-            >
-              <ChevronsUpDown size={16} />
-            </button>
-            <button
-              onClick={collapseAll}
-              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-              title={t('toolbar.collapseAll')}
-            >
-              <ChevronsDownUp size={16} />
-            </button>
-          </div>
-
-          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
-
-          {/* 主要操作: 导入数据 + 上传文件 + 复制 */}
-          <div className="flex items-center gap-0.5">
-            {/* 导入数据 */}
-            <button
-              onClick={() => setShowImportModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
-            >
-              <ClipboardPaste size={15} />
-              <span>{t('toolbar.import')}</span>
-            </button>
-            {/* 上传文件 - 图标按钮 */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-              title={t('toolbar.uploadFile')}
-            >
-              <FolderOpen size={16} />
-            </button>
-            <button
-              onClick={handleCopy}
-              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] relative"
-              title={t('toolbar.copy')}
-            >
-              {copySuccess ? (
-                <Check size={16} className="text-[var(--success)]" />
-              ) : (
-                <Copy size={16} />
-              )}
-            </button>
-          </div>
-
-          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
-
-          {/* 设置组 */}
-          <div className="flex items-center gap-0.5">
-            <button
-              onClick={toggleLocale}
-              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] flex items-center gap-1"
-              title={t('settings.language')}
-            >
-              <Languages size={16} />
-              <span className="text-xs">{locale === 'zh-CN' ? '中' : 'EN'}</span>
-            </button>
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-              title={t('settings.theme')}
-            >
-              {resolvedTheme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
-            </button>
-          </div>
-
-          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
-
-          {/* 搜索 */}
-          <div className="relative ml-1">
-            <Search
-              size={14}
-              className="absolute left-2 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
-            />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={t('toolbar.search')}
-              className="pl-7 pr-3 py-1.5 text-sm bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-md outline-none focus:border-[var(--accent)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] w-40"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-              >
-                <X size={12} />
-              </button>
-            )}
-          </div>
         </div>
 
-        {/* 右侧: 仅导出按钮 */}
-        <button
-          onClick={handleExport}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
-          title={t('toolbar.export')}
-        >
-          <Download size={16} />
-          <span>{t('toolbar.export')}</span>
-        </button>
+        {/* 右侧: 导出 + 语言 + 主题 */}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+            title={t('toolbar.export')}
+          >
+            <Download size={16} />
+            <span>{t('toolbar.export')}</span>
+          </button>
+          <div className="w-px h-6 bg-[var(--border)] opacity-50" />
+          <button
+            onClick={toggleLocale}
+            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] flex items-center gap-1"
+            title={t('settings.language')}
+          >
+            <Languages size={16} />
+            <span className="text-xs">{locale === 'zh-CN' ? '中' : 'EN'}</span>
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
+            title={t('settings.theme')}
+          >
+            {resolvedTheme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
+        </div>
       </div>
 
       {/* Validation Error */}
